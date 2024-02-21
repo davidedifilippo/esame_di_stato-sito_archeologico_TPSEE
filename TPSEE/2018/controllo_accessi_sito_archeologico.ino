@@ -3,6 +3,7 @@
 #include <SparkFun_SHTC3.h> 
 #include <SparkFunTMP102.h>
 
+
 //Dichiaro un oggetto di tipo RTC
 RTC_DS3231 myRTC;
 
@@ -12,15 +13,32 @@ SHTC3 mySHTC3;
 //Dichiaro un oggetto di tipo TMP102
 TMP102 myTMP102;
 
-const int pinRelayPompaNebulizzatore = 5;
-const int pinRelayRiscaldatori = 2;
-const int pinRelayAreatori = 3;
+/*Variabili di conteggio ospiti*/
 
+volatile int contaVisitatori = 0;
+volatile int inStanzaAffreschi = 0;
 
-int mese;
-int temp_Massima;
-int temp_Mininima;
-int temp_Media;
+/*Pin di controllo con interrupt abilitati*/
+
+const int pinTornelliIngresso = 2;
+const int pinTornelliUscita = 3;
+const int pinTastoIngressoStanza = 4;
+const int pinTastoUscitaStanza = 5;
+
+/*Pin di controllo digitale dei relè di attivazione*/
+
+const int pinRelayPompaNebulizzatore = 6;
+const int pinRelayRiscaldatori = 7;
+const int pinRelayAreatori = 8;
+const int pinRelayBloccaTornelli = 9;
+const int pinRelayBloccaPorta = 10;
+
+/*Varibili di manipolazione dati*/
+
+int mese = 0;
+int temp_Massima = 0;
+int temp_Mininima = 0;
+int temp_Media = 0;
 int temperatura_numerica = 0;
 int temperatura = 0;
 
@@ -28,11 +46,34 @@ int RH = 0;
 int RH_Mininima = 40;
 int RH_Massima = 50;
 
+/*Variabili di stato*/
+
 bool nebulizzatoreAttivo = false;
 bool areatoreAttivo = false;
 
+
 long int tempoAvvioNebulizzatore;
 long tempoAvvioAreatore;
+
+/*Funzioni di interrupt per il conteggio dei visitatori totali*/
+
+void contaIngressi(){
+  contaVisitatori++;
+}
+
+void contaUscite(){
+  contaVisitatori--;
+}
+
+/*Funzioni di interrupt per il conteggio dei visitatori in stanza affreschi*/
+
+void contaIngressiStanza(){
+  inStanzaAffreschi++;
+}
+
+void contaUsciteStanza(){
+  inStanzaAffreschi-- ;
+}
 
 void setup() {
   // put your setup code here, to run once:
@@ -58,7 +99,13 @@ void setup() {
   Serial.println("Controlla le linee di collegamento con TMP102!");
   while(true); //Si blocca l'esecuzione
   }
-  
+
+  attachInterrupt(digitalPinToInterrupt(pinTornelliIngresso), contaIngressi, HIGH);
+  attachInterrupt(digitalPinToInterrupt(pinTornelliUscita), contaUscite, HIGH);
+
+  attachInterrupt(digitalPinToInterrupt(pinTastoIngressoStanza), contaIngressiStanza, HIGH);
+  attachInterrupt(digitalPinToInterrupt(pinTastoUscitaStanza), contaUsciteStanza, HIGH);
+
   //Inizializzo data e ora nel real time clock
   myRTC.adjust(DateTime(F(__DATE__), F(__TIME__))); //si imposta sul tempo di compilazione 
  
@@ -135,8 +182,14 @@ void loop() {
   *Controllo accessi
   *************************************/
   
-   
-  
-  
+   if(contaVisitatori >=30) 
+      digitalWrite(pinRelayBloccaTornelli, HIGH);
+   else 
+      digitalWrite(pinRelayBloccaTornelli, LOW);
+    
+   if(inStanzaAffreschi >=5) 
+      digitalWrite(pinRelayBloccaPorta, HIGH);
+   else 
+      digitalWrite(pinRelayBloccaPorta, LOW);
 
 }
