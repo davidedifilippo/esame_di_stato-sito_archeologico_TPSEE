@@ -100,6 +100,12 @@ void setup() {
   while(true); //Si blocca l'esecuzione
   }
 
+  pinMode(pinRelayPompaNebulizzatore, OUTPUT);
+  pinMode(pinRelayRiscaldatori, OUTPUT);
+  pinMode(pinRelayAreatori,OUTPUT);
+  pinMode(pinRelayBloccaTornelli, OUTPUT);
+  pinMode(pinRelayBloccaPorta, OUTPUT);
+
   attachInterrupt(digitalPinToInterrupt(pinTornelliIngresso), contaIngressi, HIGH);
   attachInterrupt(digitalPinToInterrupt(pinTornelliUscita), contaUscite, HIGH);
 
