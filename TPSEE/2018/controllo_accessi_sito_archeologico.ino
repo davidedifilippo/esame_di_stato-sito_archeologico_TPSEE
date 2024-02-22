@@ -76,13 +76,11 @@ void contaUsciteStanza(){
 }
 
 void setup() {
-  // put your setup code here, to run once:
 
+  //Inizilizzo la seriale per il debug
   Serial.begin(9600);
 
   //Inizializzo la porta I2C
-  Wire.setSDA(20);
-  Wire.setSCL(21);
   Wire.begin();
 
   if(!mySHTC3.begin()){
