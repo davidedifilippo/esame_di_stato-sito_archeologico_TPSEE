@@ -150,10 +150,6 @@ void loop() {
 
   if (temperatura > temp_Media) 
     digitalWrite(pinRelayRiscaldatori, LOW); 
-  else digitalWrite(pinRelayAreatori, LOW);
-
-  if (temperatura > temp_Massima) 
-    digitalWrite(pinRelayAreatori, HIGH);
 
  /*************************************
   *Controllo dell'umidità dell'ambiente
