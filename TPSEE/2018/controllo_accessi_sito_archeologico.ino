@@ -171,7 +171,12 @@ void loop() {
   }
 
   if (nebulizzatoreAttivo == true)
-    if(millis()- tempoAvvioNebulizzatore > 10*60*1000)  digitalWrite(pinRelayPompaNebulizzatore, LOW);
+    if(millis()- tempoAvvioNebulizzatore > 10*60*1000)  
+    {
+      digitalWrite(pinRelayPompaNebulizzatore, LOW);
+      nebulizzatoreAttivo = false;
+    }
+  
   
   if (RH > RH_Massima) {
     digitalWrite(pinRelayAreatori, HIGH);  //Si attiva l'areatore
@@ -180,7 +185,11 @@ void loop() {
   }
 
   if (areatoreAttivo == true)
-    if(millis()- tempoAvvioAreatore > 10*60*1000)  digitalWrite(pinRelayPompaNebulizzatore, LOW);
+    if(millis()- tempoAvvioAreatore > 10*60*1000)  
+    {
+      digitalWrite(pinRelayPompaNebulizzatore, LOW);
+      areatoreAttivo = false;
+    }
   
  /*************************************
   *Controllo accessi
